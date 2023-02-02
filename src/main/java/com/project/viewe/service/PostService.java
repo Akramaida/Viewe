@@ -93,7 +93,7 @@ public class PostService {
         //postDto.setViewCount(post.getViewCount());
         //postDto.setUsername(post.getUsername());
         postDto.setCommentList(post.getCommentList().stream().map(this::mapToCommentDtoResponse).toList());
-        modelMapper.map(post, PostDtoResponse.class);
+        modelMapper.map(post, postDto);
         return postDto;
     }
 
@@ -107,7 +107,7 @@ public class PostService {
         //    commentDtoResponse.getVisualComment().add(i, comment.getVisualComment().get(i));
         //}
         commentDtoResponse.setSubCommentDto(comment.getSubComment().stream().map(this::mapToSubCommentDto).toList());
-        modelMapper.map(comment, CommentDtoResponse.class);
+        modelMapper.map(comment, commentDtoResponse);
         return commentDtoResponse;
     }
 
