@@ -1,8 +1,7 @@
 package com.project.viewe.controller;
 
-import com.project.viewe.dto.CommentDto;
+import com.project.viewe.dto.CommentDtoRequest;
 import com.project.viewe.dto.CommentDtoResponse;
-import com.project.viewe.dto.VisualCommentDto;
 import com.project.viewe.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
-import static org.springframework.http.ResponseEntity.status;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -25,17 +21,17 @@ public class CommentController {
 
     @PostMapping("comment")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addComment(@PathVariable Long postId, @RequestBody CommentDto commentDto) {
-        commentService.addComment(postId, commentDto);
+    public void addComment(@PathVariable Long postId, @RequestBody CommentDtoRequest commentDtoRequest) {
+        commentService.addComment(postId, commentDtoRequest);
     }
 
     @PostMapping("comment/{commentId}/sub-comment")
     @ResponseStatus(HttpStatus.CREATED)
     public void addSubComment(@PathVariable Long postId,
                               @PathVariable Long commentId,
-                              @RequestBody CommentDto commentDto) {
+                              @RequestBody CommentDtoRequest commentDtoRequest) {
         log.info("I am in addCommentToComment");
-        commentService.addSubComment(postId, commentId, commentDto);
+        commentService.addSubComment(postId, commentId, commentDtoRequest);
     }
 
     @GetMapping("comment")
@@ -49,16 +45,16 @@ public class CommentController {
     public String addVisualCommentAndTextToComment(@PathVariable Long postId,
                                                    @PathVariable Long commentId,
                                                    @RequestPart("multipartFile") MultipartFile multipartFile,
-                                                   @RequestPart("commentDto") CommentDto commentDto) {
-        return commentService.addVisualCommentAndTextToComment(postId, commentId, multipartFile, commentDto);
+                                                   @RequestPart("commentDto") CommentDtoRequest commentDtoRequest) {
+        return commentService.addVisualCommentAndTextToComment(postId, commentId, multipartFile, commentDtoRequest);
     }
 
     @PostMapping("comment/visual-comment")
     @ResponseStatus(HttpStatus.CREATED)
     public void addVisualCommentToPost(@PathVariable Long postId,
                                           @RequestPart("multipartFile") MultipartFile multipartFile,
-                                          @RequestPart("commentDto") CommentDto commentDto) {
-        commentService.addVisualCommentToPost(postId, multipartFile, commentDto);
+                                          @RequestPart("commentDto") CommentDtoRequest commentDtoRequest) {
+        commentService.addVisualCommentToPost(postId, multipartFile, commentDtoRequest);
     }
 
 

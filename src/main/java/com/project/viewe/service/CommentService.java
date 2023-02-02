@@ -1,6 +1,6 @@
 package com.project.viewe.service;
 
-import com.project.viewe.dto.CommentDto;
+import com.project.viewe.dto.CommentDtoRequest;
 import com.project.viewe.dto.CommentDtoResponse;
 import com.project.viewe.exception.ProjectException;
 import com.project.viewe.model.Comment;
@@ -33,10 +33,10 @@ public class CommentService {
     private final UploadVisualComment uploadVisualComment;
     private final ModelMapper modelMapper;
 
-    public void addComment(Long postId, CommentDto commentDto) {
+    public void addComment(Long postId, CommentDtoRequest commentDtoRequest) {
         var user = userService.getCurrentUser();
         var post = postService.findPostById(postId);
-        var comment = mapToCommentDto(commentDto, user);
+        var comment = mapToCommentDto(commentDtoRequest, user);
         user.getComments().add(comment);
         userRepo.save(user);
         post.getCommentList().add(comment);
@@ -45,21 +45,21 @@ public class CommentService {
         save(post, comment);
     }
 
-    private Comment mapToCommentDto(CommentDto commentDto, User user) {
+    private Comment mapToCommentDto(CommentDtoRequest commentDtoRequest, User user) {
         Comment comment = new Comment();
-        comment.setText(commentDto.getText());
+        comment.setText(commentDtoRequest.getText());
         comment.setUsername(user.getUsername());
         commentRepo.save(comment);
         return comment;
     }
 
-    public void addSubComment(Long postId, Long commentId, CommentDto commentDto) {
+    public void addSubComment(Long postId, Long commentId, CommentDtoRequest commentDtoRequest) {
         var user = userService.getCurrentUser();
         var post = postService.findPostById(postId);
         var comment = findCommentById(commentId);
         user.getComments().remove(comment);
         post.getCommentList().remove(comment);
-        comment.getSubComment().add(mapToCommentDto(commentDto, user));
+        comment.getSubComment().add(mapToCommentDto(commentDtoRequest, user));
         post.getCommentList().add(comment);
         user.getComments().add(comment);
         userRepo.save(user);
@@ -76,13 +76,13 @@ public class CommentService {
         return modelMapper.map(comment, CommentDtoResponse.class);
     }
 
-    public String addVisualCommentAndTextToComment(Long postId, Long commentId, MultipartFile multipartFile, CommentDto commentDto) {
+    public String addVisualCommentAndTextToComment(Long postId, Long commentId, MultipartFile multipartFile, CommentDtoRequest commentDtoRequest) {
         var user = userService.getCurrentUser();
         var post = postService.findPostById(postId);
         var comment = findCommentById(commentId);
         post.getCommentList().remove(comment);
         user.getComments().remove(comment);
-        comment.getSubComment().add(mapToVisualCommentDtoRequest(user, commentDto, multipartFile));
+        comment.getSubComment().add(mapToVisualCommentDtoRequest(user, commentDtoRequest, multipartFile));
         user.getComments().add(comment);
         userRepo.save(user);
         post.getCommentList().add(comment);
@@ -106,21 +106,21 @@ public class CommentService {
         return visualComment;
     }
 
-    public void addVisualCommentToPost(Long postId, MultipartFile multipartFile, CommentDto commentDto) {
+    public void addVisualCommentToPost(Long postId, MultipartFile multipartFile, CommentDtoRequest commentDtoRequest) {
         var post = postRepo.findById(postId)
                 .orElseThrow(()-> new ProjectException("Cannot find post by id: " + postId));
         var user = userService.getCurrentUser();
-        var visualComment = mapToVisualCommentDtoRequest(user, commentDto, multipartFile);
+        var visualComment = mapToVisualCommentDtoRequest(user, commentDtoRequest, multipartFile);
         user.getComments().add(visualComment);
         userRepo.save(user);
         post.getCommentList().add(visualComment);
         save(post, visualComment);
     }
 
-    private Comment mapToVisualCommentDtoRequest(User user, CommentDto commentDto, MultipartFile multipartFile) {
+    private Comment mapToVisualCommentDtoRequest(User user, CommentDtoRequest commentDtoRequest, MultipartFile multipartFile) {
         Comment visualComment = new Comment();
         visualComment = createVisualComment(multipartFile, visualComment);
-        visualComment.setText(commentDto.getText());
+        visualComment.setText(commentDtoRequest.getText());
         visualComment.setUsername(user.getUsername());
         commentRepo.save(visualComment);
         return visualComment;
