@@ -6,10 +6,7 @@ import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 @Getter
 @Setter
@@ -33,23 +30,22 @@ public class Post {
     private PostStatus postStatus;
     @ElementCollection
     private List<String> likeUsername = new ArrayList<>();
-    private Long likeCount = 0L;
+    private AtomicInteger likeCount = new AtomicInteger(0);
     @ElementCollection
     private List<String> disLikeUsername = new ArrayList<>();
-    private Long disLikeCount = 0L;
-    private Long viewCount = 0L;
+    private AtomicInteger disLikeCount = new AtomicInteger(0);
+    private AtomicInteger viewCount = new AtomicInteger(0);
     @OneToMany
     private List<Comment> commentList= new ArrayList<>();
     @ManyToOne
-    @JoinColumn(name="user_id")
     private User user;
     public void increaseViewCount(){
-        viewCount++;
+        viewCount.incrementAndGet();
     }
-    public void increaseLikeCount(){ likeCount++; }
-    public void decreaseLikeCount(){ likeCount--; }
-    public void increaseDisLikeCount(){ disLikeCount++; }
-    public void decreaseDisLikeCount(){ disLikeCount--; }
+    public void increaseLikeCount(){ likeCount.incrementAndGet(); }
+    public void decreaseLikeCount(){ likeCount.decrementAndGet(); }
+    public void increaseDisLikeCount(){ disLikeCount.incrementAndGet(); }
+    public void decreaseDisLikeCount(){ disLikeCount.decrementAndGet(); }
     public void addUsernameToLikePosts(String username){ likeUsername.add(username);}
     public void addUsernameToDisLikePosts(String username){ disLikeUsername.add(username);}
     public void removeUsernameFromLikePosts(String username){ likeUsername.remove(username);}

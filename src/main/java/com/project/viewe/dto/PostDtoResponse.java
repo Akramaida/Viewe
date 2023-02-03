@@ -20,9 +20,9 @@ public class PostDtoResponse {
     private List<String> tags = new ArrayList<>();
     private PostStatus postStatus;
     private List<CommentDtoResponse> commentList;
-    private Long likeCount;
-    private Long disLikeCount;
-    private Long viewCount;
+    private Integer likeCount;
+    private Integer disLikeCount;
+    private Integer viewCount;
     private String photoUrl;
     private String videoUrl;
     private String videoThumbnailUrl;
